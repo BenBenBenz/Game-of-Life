@@ -80,30 +80,33 @@ void Game::eventHandler() {
             m_view.zoom(1-event.mouseWheel.delta*0.05);
         }
         if (event.type == sf::Event::MouseButtonPressed) {
-            if (event.mouseButton.button == sf::Mouse::Right) {
-
-            } else  {}
+            if (event.mouseButton.button == sf::Mouse::Left) {
+                std::cerr << event.mouseButton.x << " " << event.mouseButton.y << std::endl;
+                int indx = int(event.mouseButton.x/PIXPERCELL);
+                int indy = int(event.mouseButton.y/PIXPERCELL);
+                std::cerr << indx << " " << indy << std::endl;
+                if (m_map.getCell(indx,indy)) m_map.setCell(indx,indy, false);
+                else m_map.setCell(indx,indy, true);
+            }
         }
-        /*if (event.type == sf::Event::MouseMoved) {
-            std::cout << "Mouse x: " << event.mouseMove.x << std::endl;
-            std::cout << "Mouse y: " << event.mouseMove.y << std::endl;
-        }*/
     }
 }
 
 void Game::readTemplate(std::string name) {
     std::ifstream infile(name);
 
-    char cell = '0';
     for(int i = 0; i < WORLDSIZE; i++) {
         for(int j = 0; j < WORLDSIZE; j++) {
-            infile.get(cell);
-            if (cell=='\n') {
+            char tmp;
+            infile.get(tmp);
+            if (tmp!='1' && tmp!='0') {
                 j--;
                 continue;
             }
-            m_map.setCell(j, i, cell=='1');
+            m_map.setCell(j, i, tmp=='1');
+            std::cerr << tmp;
         }
+        std::cerr << std::endl;
     }
     infile.close();
     std::cerr << "File " << name << " loaded" << std::endl;
